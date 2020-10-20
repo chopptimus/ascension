@@ -1,2 +1,13 @@
-/* some style */
+img.pickable:hover {
+    cursor: pointer;
+}
+
+img.not-pickable {
+    filter: grayscale(100%);
+}
+
+.ability-picker {
+    width: 50%;
+    flex-wrap: wrap !important;
+}
 
