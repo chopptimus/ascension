@@ -1,9 +1,7 @@
 (ns ^:figwheel-hooks ascension.core
   (:require [goog.dom :as gdom]
-            [goog.string :as gstring]
-            goog.string.format
             [re-com.core :as rc
-             :refer [button box h-box v-box gap input-textarea]]
+             :refer [button box h-box v-box input-textarea]]
             [reagent.core :as reagent :refer [atom]]
             [reagent.dom :as rdom]))
 
@@ -279,25 +277,31 @@
                           spells))
                    (sort specs))))))
 
+(defn spec-block
+  [picked spec-index spells]
+  (->> spells
+       (map-indexed vector)
+       (reduce (fn [xs [i spell]]
+                 (if (contains? picked spell)
+                   xs
+                   (conj xs i)))
+               [])
+       (map #(spell-macro-text % spec-index))))
+
+(defn class-block
+  [picked class-index specs]
+  (into
+   [(select-class-macro-text class-index)]
+   cat
+   (map-indexed #(spec-block picked %1 %2) specs)))
+
 (defn macro-text
   [picked]
-  (str
-   (apply
-    str
-    (for [[class-index class-spells] (map-indexed vector (ordered-spells all-spells))]
-      (apply
-       str
-       (select-class-macro-text class-index)
-       (for [[spec-index spells] (map-indexed vector class-spells)]
-         (apply str (->> spells
-                         (map-indexed vector)
-                         (reduce (fn [xs [i spell]]
-                                   (if (contains? picked spell)
-                                     xs
-                                     (conj xs i)))
-                                 [])
-                         (map #(spell-macro-text % spec-index))))))))
-   "/click StaticPopup1Button1"))
+  (str (->> (ordered-spells all-spells)
+            (map-indexed #(class-block picked %1 %2))
+            (into [] cat)
+            (apply str))
+       "/click StaticPopup1Button1"))
 
 (defn copy-to-clipboard
   [text]
@@ -307,7 +311,6 @@
     (.select el)
     (js/document.execCommand "copy")
     (js/document.body.removeChild el)))
-
 
 (defn macro-textarea
   [picked]

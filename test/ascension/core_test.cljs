@@ -1,8 +1,6 @@
 (ns ascension.core-test
-  (:require [ascension.core :refer [ordered-spells all-spells macro-text]]
-            [cljs.test :refer-macros [deftest is testing]]
-            [clojure.data :refer [diff]]
-            [clojure.string :as string]))
+  (:require [ascension.core :refer [macro-text]]
+            [cljs.test :refer-macros [deftest is]]))
 
 (def expected
   "/click CA2CharacterAdvancementMainClassButton1
