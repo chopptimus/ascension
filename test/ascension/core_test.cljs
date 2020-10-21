@@ -184,7 +184,7 @@
 /click DropDownList1Button3
 /click CA2.CharacterAdvancementMain.Main.Tree3.Content.Spells.Button5
 /click DropDownList1Button3
-")
+/click StaticPopup1Button1")
 
 (deftest macro-text-test
   (let [picked #{{:name "Rend",

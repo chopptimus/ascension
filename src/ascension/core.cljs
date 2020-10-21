@@ -2,7 +2,8 @@
   (:require [goog.dom :as gdom]
             [goog.string :as gstring]
             goog.string.format
-            [re-com.core :as rc :refer [box h-box v-box gap input-textarea]]
+            [re-com.core :as rc
+             :refer [button box h-box v-box gap input-textarea]]
             [reagent.core :as reagent :refer [atom]]
             [reagent.dom :as rdom]))
 
@@ -221,10 +222,10 @@
       {:src (:image spell)
        :on-click #(on-change spell (not picked?))}]
      (if pickable?
-       [:img.pickable
+       [:img.not-picked.pickable
         {:src (:image spell)
          :on-click #(on-change spell (not picked?))}]
-       [:img.not-pickable
+       [:img.not-picked.not-pickable
         {:src (:image spell)}]))])
 
 (defn picker
@@ -280,30 +281,48 @@
 
 (defn macro-text
   [picked]
-  (apply
-   str
-   (for [[class-index class-spells] (map-indexed vector (ordered-spells all-spells))]
-     (apply
-      str
-      (select-class-macro-text class-index)
-      (for [[spec-index spells] (map-indexed vector class-spells)]
-        (apply str (->> spells
-                        (map-indexed vector)
-                        (reduce (fn [xs [i spell]]
-                                  (if (contains? picked spell)
-                                    xs
-                                    (conj xs i)))
-                                [])
-                        (map #(spell-macro-text % spec-index)))))))))
+  (str
+   (apply
+    str
+    (for [[class-index class-spells] (map-indexed vector (ordered-spells all-spells))]
+      (apply
+       str
+       (select-class-macro-text class-index)
+       (for [[spec-index spells] (map-indexed vector class-spells)]
+         (apply str (->> spells
+                         (map-indexed vector)
+                         (reduce (fn [xs [i spell]]
+                                   (if (contains? picked spell)
+                                     xs
+                                     (conj xs i)))
+                                 [])
+                         (map #(spell-macro-text % spec-index))))))))
+   "/click StaticPopup1Button1"))
+
+(defn copy-to-clipboard
+  [text]
+  (let [el (js/document.createElement "textarea")]
+    (set! (.-value el) text)
+    (js/document.body.appendChild el)
+    (.select el)
+    (js/document.execCommand "copy")
+    (js/document.body.removeChild el)))
+
 
 (defn macro-textarea
   [picked]
-  [input-textarea
-   :model (macro-text picked)
-   :width "100%"
-   :rows 10
-   :on-change (fn [])
-   :disabled? true])
+  (let [text (macro-text picked)]
+    [v-box
+     :children
+     [[button
+       :label "Copy"
+       :on-click #(copy-to-clipboard text)]
+      [input-textarea
+       :model text
+       :width "100%"
+       :rows 10
+       :on-change (fn [])
+       :disabled? true]]]))
 
 (defn macro-generator []
   (let [picked (:picked @app-state)
