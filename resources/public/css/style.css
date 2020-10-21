@@ -1,13 +1,12 @@
-img.pickable:hover {
-    cursor: pointer;
+img.picked {
+    filter: grayscale(100%);
 }
 
-img.not-pickable {
-    filter: grayscale(100%);
+img.pickable:hover {
+    cursor: pointer;
 }
 
 .ability-picker {
     width: 50%;
     flex-wrap: wrap !important;
 }
-

@@ -8,7 +8,7 @@
 
 (defonce app-state (atom {:picked #{}}))
 
-(def spells
+(def all-spells
   {:druid
    {:balance
     [{:name "Thorns"
@@ -20,7 +20,7 @@
     :feral
     [{:name "Demoralizing Roar"
       :image "Icons/Druid/ABILITY_DRUID_DEMORALIZINGROAR.png"}
-     {:name "Claw"
+     {:name "Swipe (Bear)"
       :image "Icons/Druid/INV_Misc_MonsterClaw_03.png"}
      {:name "Maul"
       :image "Icons/Druid/Ability_Druid_Maul.png"}
@@ -52,19 +52,21 @@
       :image "Icons/Hunter/Ability_ImpalingBolt.png"}
      {:name "Concussive Shot"
       :image "Icons/Hunter/Spell_Frost_Stun.png"}
-     {:name "Autoshot"
+     {:name "Auto Shot"
       :image "Icons/Hunter/INV_Weapon_Bow_02.png"}]
     :survival
     [{:name "Mongoose Bite"
       :image "Icons/Hunter/Ability_Hunter_SwiftStrike.png"}
-     {:name "Unknown Survival Spell"
+     {:name "Raptor Strike"
       :image "Icons/Hunter/Ability_MeleeDamage.png"}
-     {:name "Track Beasts"
+     {:name "Tracking Mastery"
       :image "Icons/Hunter/Ability_Tracking.png"}]}
    :mage
    {:arcane
-    [{:name "Arcane Intellect"
+    [{:name "Conjure Food"}
+     {:name "Arcane Intellect"
       :image "Icons/Mage/Spell_Holy_MagicalSentry.png"}
+     {:name "Conjure Water"}
      {:name "Arcane Missiles"
       :image "Icons/Mage/Spell_Nature_StarFall.png"}]
     :fire
@@ -83,23 +85,26 @@
       :image "Icons/Paladin/Spell_Holy_HolyBolt.png"}
      {:name "Blessing of Wisdom"
       :image "Icons/Paladin/Spell_Holy_SealOfWisdom.png"}
-     {:name "Judgement"
+     {:name "Seal of Righteousness"
       :image "Icons/Paladin/Ability_ThunderBolt.png"}]
     :protection
-    [{:name "Devotion Aura"
+    [{:name "Divine Protection"}
+     {:name "Devotion Aura"
       :image "Icons/Paladin/SPELL_HOLY_DEVOTIONAURA.png"}
+     {:name "Hammer of Justice"}
      {:name "Righteous Fury"
       :image "Icons/Paladin/Spell_Holy_SealOfFury.png"}]
     :retribution
     [{:name "Blessing of Might"
       :image "Icons/Paladin/Spell_Holy_FistOfJustice.png"}
-     {:name "Seal of Something"
+     {:name "Judgement of Light"
       :image "Icons/Paladin/Spell_Holy_RighteousFury.png"}
-     {:name "Seal of Wisdom"
+     {:name "Judgement of Wisdom"
       :image "Icons/Paladin/Ability_Paladin_JudgementBlue.png"}]}
    :priest
    {:discipline
-    [{:name "Holy Word: Fortitude"
+    [{:name "Power Word: Shield"}
+     {:name "Holy Word: Fortitude"
       :image "Icons/Priest/Spell_Holy_WordFortitude.png"}]
     :holy
     [{:name "Renew"
@@ -109,11 +114,13 @@
      {:name "Heal"
       :image "Icons/Priest/Spell_Holy_GreaterHeal.png"}]
     :shadow
-    [{:name "Shadow World: Pain"
+    [{:name "Fade"}
+     {:name "Shadow World: Pain"
       :image "Icons/Priest/Spell_Shadow_ShadowWordPain.png"}]}
    :rogue
    {:assassination
-    [{:name "Slice and Dice"
+    [{:name "Eviscerate"}
+     {:name "Slice and Dice"
       :image "Icons/Rogue/Ability_Rogue_SliceDice.png"}]
     :combat
     [{:name "Backstab"
@@ -127,22 +134,24 @@
      {:name "Evasion"
       :image "Icons/Rogue/Spell_Shadow_ShadowWard.png"}]
     :subtlety
-    [{:name "Stealth"
+    [{:name "Pick Pocket"}
+     {:name "Sealth"
       :image "Icons/Rogue/Ability_Stealth.png"}]}
    :shaman
    {:elemental
     [{:name "Lightning Bolt"
       :image "Icons/Shaman/Spell_Nature_Lightning.png"}
+     {:name "Earthbind Totem"}
      {:name "Searing Totem"
       :image "Icons/Shaman/Spell_Fire_SearingTotem.png"}
-     {:name "Stone Claw Totem"
+     {:name "Stoneclaw Totem"
       :image "Icons/Shaman/Spell_Nature_StoneClawTotem.png"}
      {:name "Earth Shock"
       :image "Icons/Shaman/Spell_Nature_EarthShock.png"}]
     :enhancement
     [{:name "Lightning Shield"
       :image "Icons/Shaman/Spell_Nature_LightningShield.png"}
-     {:name "Stone Skin Totem"
+     {:name "Stoneskin Totem"
       :image "Icons/Shaman/Spell_Nature_StoneSkinTotem.png"}]
     :restoration
     [{:name "Healing Wave"
@@ -155,13 +164,16 @@
       :image "Icons/Warlock/Spell_Shadow_CurseOfMannoroth.png"}
      {:name "Curse of Agony"
       :image "Icons/Warlock/Spell_Shadow_CurseOfSargeras.png"}
+     {:name "Drain Soul"}
      {:name "Life Tap"
-      :image "Icons/Warlock/Spell_Shadow_BurningSpirit.png"}]
+      :image "Icons/Warlock/Spell_Shadow_BurningSpirit.png"}
+     {:name "Fear"}]
     :demonology
     [{:name "Demon Skin"
       :image "Icons/Warlock/Spell_Shadow_RagingScream.png"}
      {:name "Summon Imp"
-      :image "Icons/Warlock/Spell_Shadow_SummonImp.png"}]
+      :image "Icons/Warlock/Spell_Shadow_SummonImp.png"}
+     {:name "Summon Voidwalker"}]
     :destruction
     [{:name "Immolate"
       :image "Icons/Warlock/Spell_Fire_Immolation.png"}
@@ -181,7 +193,7 @@
       :image "Icons/Warrior/Ability_Warrior_OffensiveStance.png"}
      {:name "Thunderclap"
       :image "Icons/Warrior/SPELL_NATURE_THUNDERCLAP.png"}
-     {:name "Unknown Arms Ability"
+     {:name "Overpower"
       :image "Icons/Warrior/Ability_MeleeDamage.png"}]
     :fury
     [{:name "Battle Shout"
@@ -191,7 +203,7 @@
     :protection
     [{:name "Defensive Stance"
       :image "Icons/Warrior/Ability_Warrior_DefensiveStance.png"}
-     {:name "Shield Slam"
+     {:name "Shield Bash"
       :image "Icons/Warrior/Ability_Warrior_ShieldBash.png"}
      {:name "Taunt"
       :image "Icons/Warrior/Spell_Nature_Reincarnation.png"}
@@ -223,15 +235,16 @@
      :width "50%"
      :gap "2em"
      :children
-     (for [[class class-abilities] (sort spells)]
+     (for [[class specs] (sort all-spells)]
        ^{:key class}
        [h-box
         :gap "1em"
         :children
-        (for [[spec spec-abilities] (sort class-abilities)]
+        (for [[spec spells] (sort specs)]
           [h-box
            :children
-           (for [spell spec-abilities]
+           (for [spell spells
+                 :when (:image spell)]
              ^{:key (:id spell)}
              (let [spell (assoc spell :class class :spec spec)]
                [spell-icon
@@ -240,22 +253,48 @@
                 (contains? picked spell)
                 can-pick-more?]))])])]))
 
+(defn select-class-macro-text
+  [class-index]
+  (str "/click CA2CharacterAdvancementMainClassButton"
+       (inc class-index)
+       \newline))
+
 (defn spell-macro-text
-  [{:keys [class spec name]}]
-  (let [class-index (.indexOf (sort (keys spells)) class)
-        spec-index (.indexOf (sort (keys (get spells class))) spec)
-        spell-index (.indexOf (->> (get-in spells [class spec])
-                                   (sort-by :name)
-                                   (map :name))
-                              name)]
-    (str
-     "/click CA2CharacterAdvancementMainClassButton" (inc class-index)
-     \newline "/click CA2.CharacterAdvancementMain.Main.Tree" (inc spec-index)
-     ".Content.Spells.Button" (inc spell-index) \newline)))
+  [spell-index spec-index]
+  (str
+   "/click CA2.CharacterAdvancementMain.Main.Tree" (inc spec-index)
+   ".Content.Spells.Button" (inc spell-index) \newline
+   "/click DropDownList1Button3" \newline))
+
+(defn ordered-spells
+  [all-spells]
+  (->> (sort all-spells)
+       (map (fn [[class specs]]
+              (map (fn [[spec spells]]
+                     (map (fn [spell]
+                            (assoc spell
+                                   :class class
+                                   :spec spec))
+                          spells))
+                   (sort specs))))))
 
 (defn macro-text
   [picked]
-  (apply str (map spell-macro-text picked)))
+  (apply
+   str
+   (for [[class-index class-spells] (map-indexed vector (ordered-spells all-spells))]
+     (apply
+      str
+      (select-class-macro-text class-index)
+      (for [[spec-index spells] (map-indexed vector class-spells)]
+        (apply str (->> spells
+                        (map-indexed vector)
+                        (reduce (fn [xs [i spell]]
+                                  (if (contains? picked spell)
+                                    xs
+                                    (conj xs i)))
+                                [])
+                        (map #(spell-macro-text % spec-index)))))))))
 
 (defn macro-textarea
   [picked]
